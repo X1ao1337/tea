@@ -37,8 +37,67 @@ class UserController extends Controller
         $user->plot = $bj->plot;
         $user->code = $bj->code;
 
-        $md = $user->save();
+        $user->save();
 
     	return response()->json($user);
     }
+
+
+
+    public function registrValid(Request $hme)
+    {
+        $valid = Validator::make($hme->all(), [
+        'name' => 'required',
+        'last_name' => 'required',
+        'age' => 'required',
+        'data_b' => 'required',
+        'password' => 'required',
+        'number' => 'required',
+         ]);
+
+        if ($valid->fails())
+            return response()->json($valid->errors());
+
+        $user = User::create($hme->all());
+        return response()->json('Оk');
+    }
+
+ // ___19.04.2077___
+
+     public function loginValid(Request $hme) 
+    {
+        $valid = Validator::make($hme->all(), [
+            'number' => 'required',
+            'password' => 'required',
+        ]);
+
+        if ($valid->fails()) {
+            return response()->json($valid->errors());
+        }
+
+        if($user = User::where('number', $hme->number)->first())
+        {
+            if ($hme->password == $user->password)
+            {
+                //$user->api_token=Str::random(50);
+                $user->api_token="0";
+                $user->save();
+                return response()->json('Ну ты и машина, api_token:'. $user->api_token);
+            }
+        }
+                return response()->json('Ахаха, ты не то творишь, api_token:'. $user->api_token);
+    }
+
+    public function logoutValid(Request $hme)
+        {
+            $user = User::where("api_token",$hme->api_token)->first();
+
+            if($user)
+            {
+                $user->api_token = "0";
+                $user->save();
+                return response()->json('Хорошая работа, Влад');
+            }
+        }
+}
 }

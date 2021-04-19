@@ -16,3 +16,9 @@ use App\News;
 */
 Route::get('getusers/', 'UserController@getUsers');
 Route::post('addusers/', 'UserController@addUser');
+Route::patch('/updateusers/', 'UserController@updateUser');
+
+//___19.04.2077
+Route::post('/registrvalid/','App\Http\Controllers\UsController@registrValid');
+Route::post('/loginvalid/','App\Http\Controllers\UsController@loginValid');
+Route::post('/logoutvalid/','App\Http\Controllers\UsController@logoutValid');
