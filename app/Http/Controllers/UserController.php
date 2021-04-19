@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
+
 class UserController extends Controller
 {
     public function getUsers()
@@ -42,55 +47,66 @@ class UserController extends Controller
     	return response()->json($user);
     }
 
+// ___19.04.2077___
 
-
-    public function registrValid(Request $hme)
+    public function registrValid(Request $bj)
     {
-        $valid = Validator::make($hme->all(), [
-        'name' => 'required',
-        'last_name' => 'required',
-        'age' => 'required',
-        'data_b' => 'required',
-        'password' => 'required',
-        'number' => 'required',
-         ]);
+        $valid = Validator::make($bj->all(),
+        [
+        'title' => 'required',
+        'genre' => 'required',
+        'plot' => 'required',
+        'code' => 'required',
+        'Number' => 'required',
+        'Password' => 'required',
+        ]);
 
         if ($valid->fails())
-            return response()->json($valid->errors());
+        return response()->json($valid->errors());
 
-        $user = User::create($hme->all());
+        $user = User::create($bj->all());
         return response()->json('Оk');
     }
 
- // ___19.04.2077___
+ 
 
-     public function loginValid(Request $hme) 
+     public function loginValid(Request $bj) 
     {
-        $valid = Validator::make($hme->all(), [
-            'number' => 'required',
-            'password' => 'required',
+        $valid = Validator::make($bj->all(),
+        [
+            'Number' => 'required',
+            'Password' => 'required',
         ]);
 
-        if ($valid->fails()) {
+
+        if ($valid->fails())
+        {
             return response()->json($valid->errors());
         }
 
-        if($user = User::where('number', $hme->number)->first())
+
+
+
+        if($user = User::where('Number', $bj->Number)->first())
         {
-            if ($hme->password == $user->password)
+            if ($bj->Password == $user->Password)
             {
-                //$user->api_token=Str::random(50);
-                $user->api_token="0";
+                
+                $user->api_token=null;
                 $user->save();
                 return response()->json('Ну ты и машина, api_token:'. $user->api_token);
             }
         }
-                return response()->json('Ахаха, ты не то творишь, api_token:'. $user->api_token);
-    }
 
-    public function logoutValid(Request $hme)
+        return response()->json('Ахаха, ты не то творишь, api_token:'. $user->api_token);
+    }   
+
+
+
+    public function logoutValid(Request $bj)
+    {
         {
-            $user = User::where("api_token",$hme->api_token)->first();
+            $user = User::where("api_token",$bj->api_token)->first();
 
             if($user)
             {
@@ -99,5 +115,5 @@ class UserController extends Controller
                 return response()->json('Хорошая работа, Влад');
             }
         }
-}
+    }
 }
